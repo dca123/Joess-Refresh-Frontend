@@ -4,7 +4,7 @@ import { Icon, Panel } from "rsuite";
 
 
 const ANNOUNCEMENTS_QUERY = gql `
-  {
+  query announcements_query{
     announcements{
       title
       detail
@@ -12,7 +12,7 @@ const ANNOUNCEMENTS_QUERY = gql `
     }
   }
 `
-function Announcements() {
+function Announcements(props) {
   const {data} = useQuery(ANNOUNCEMENTS_QUERY);
 
   return (

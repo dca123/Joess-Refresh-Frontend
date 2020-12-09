@@ -3,14 +3,18 @@ import React, { Component } from "react";
 import { Icon, Progress, Panel } from "rsuite";
 
 const ACADEMIC_PROGRESS_QUERY = gql `
-  {
-    student(id: 1){
+  query academic_progress_query($id: ID!){
+    student(id: $id){
       creditsCompleted
     }
   }
 `
-function AcademicProgress(){
-  const {data} = useQuery(ACADEMIC_PROGRESS_QUERY);
+function AcademicProgress(props){
+  const {data} = useQuery(ACADEMIC_PROGRESS_QUERY, {
+    variables: {
+      id: props.userId
+    }
+  });
   return (
     <div>
       {

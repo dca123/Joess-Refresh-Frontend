@@ -3,8 +3,8 @@ import { Panel, Icon, Button, Modal, Form, FormGroup, FormControl, ControlLabel 
 import {useQuery, gql} from '@apollo/client';
 
 const NAMES_QUERY = gql `
-  {
-    student(id: 1) {
+  query names_query($id: ID!){
+    student(id: $id) {
       names {
         type
         name
@@ -12,9 +12,13 @@ const NAMES_QUERY = gql `
     } 
   }
 `;
-function Names() {
+function Names(props) {
 
-  const {data} = useQuery(NAMES_QUERY);
+  const {data} = useQuery(NAMES_QUERY, {
+    variables: {
+      id: props.userId
+    }
+  });
   const [values, setValues] = useState(
     {
       data: data,

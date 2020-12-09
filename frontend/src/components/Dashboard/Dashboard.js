@@ -11,11 +11,11 @@ class Home extends Component {
       <div style={{ width: "100%" }}>
         <div style={{ float: "left", width: "50%", minWidth: "600px", overflow: "auto" }}>
           <Announcements />
-          <ActionItems />
+          <ActionItems userId={this.props.userId}/>
         </div>
         <div style={{ float: "left", width: "50%", minWidth: "600px" }}>
-          <AcademicProgress />
-          <CourseSchedule height="438px" />
+          <AcademicProgress userId={this.props.userId}/>
+          <CourseSchedule height="438px" userId={this.props.userId}/>
         </div>
       </div>
     );

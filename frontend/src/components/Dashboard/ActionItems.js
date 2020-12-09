@@ -3,8 +3,8 @@ import React, { Component } from "react";
 import { Icon, Panel } from "rsuite";
 
 const ACTION_ITEMS_QUERY = gql `
-  {
-    student(id: 1){
+  query action_items_query($id: ID!){
+    student(id: $id){
       actionItems{
         title
         detail
@@ -14,8 +14,12 @@ const ACTION_ITEMS_QUERY = gql `
   }
 `
 
-function ActionItems(){
-  const {data} = useQuery(ACTION_ITEMS_QUERY);
+function ActionItems(props){
+  const {data} = useQuery(ACTION_ITEMS_QUERY, {
+    variables: {
+      id: props.userId
+    }
+  });
   return (
     <div>
       {

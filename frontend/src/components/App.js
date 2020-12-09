@@ -9,6 +9,7 @@ import { Sidenav, Header, Dashboard, Personal, Academics, Finance, Resources, Se
 
 class App extends Component {
   render() {
+    const userId = 2;
     return (
       <Router>
         <Container>
@@ -18,18 +19,30 @@ class App extends Component {
           <div style={{ display: "flex", overflowX: "hidden" }}>
             {/* Side Nav Bar */}
             <div style={{ minHeight: "calc(100vh - 88px)", height: "100%", float: "left" }}>
-              <Sidenav />
+              <Sidenav userId={userId}/>
             </div>
 
             {/* Main Content */}
             <div style={{ flexGrow: "1", backgroundColor: "#E5E5E5", padding: "15px" }}>
               <Switch>
-                <Route path="/personal" component={Personal} />
-                <Route path="/academics" component={Academics} />
-                <Route path="/finance" component={Finance} />
-                <Route path="/resources" component={Resources} />
-                <Route path="/settings" component={Settings} />
-                <Route path="/" component={Dashboard} />
+                <Route path="/personal">
+                  <Personal userId={userId}/>
+                </Route>
+                <Route path="/academics">
+                  <Academics userId={userId}/>
+                </Route>
+                <Route path="/finance">
+                  <Finance userId={userId}/>
+                </Route>
+                <Route path="/resources">
+                  <Resources userId={userId}/>
+                </Route>
+                <Route path="/settings">
+                  <Settings userId={userId}/>
+                </Route>
+                <Route path="/">
+                  <Dashboard userId={userId}/>
+                </Route>
               </Switch>
             </div>
           </div>

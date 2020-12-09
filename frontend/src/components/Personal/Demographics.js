@@ -3,8 +3,8 @@ import { Panel, Icon } from "rsuite";
 import {useQuery, gql} from '@apollo/client';
 
 const DEMOGRAPHICS_QUERY = gql `
-  {
-    student(id: 1) {
+  query demographics_query($id: ID!){
+    student(id: $id) {
       studentID
       gender
       dob
@@ -21,8 +21,13 @@ const DEMOGRAPHICS_QUERY = gql `
   }
 `;
 
-function Demographics() {
-  const {data} = useQuery(DEMOGRAPHICS_QUERY);
+function Demographics(props) {
+  console.log(props.userId);
+  const {data} = useQuery(DEMOGRAPHICS_QUERY, {
+    variables: {
+      id: props.userId
+    }
+  });
   return (
     <div>
       {data && (<div style={{ width: "100%" }}>

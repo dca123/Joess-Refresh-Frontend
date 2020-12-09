@@ -14,8 +14,8 @@ import {
 } from "rsuite";
 
 const PHONENUMBERS_QUERY= gql `
-  {
-    student(id: 1) {
+  query phonenumbers_query($id: ID!){
+    student(id: $id) {
       phonenumbers {
         type
         number
@@ -26,9 +26,13 @@ const PHONENUMBERS_QUERY= gql `
     } 
   }
 `;
-function PhoneNumbers(){
+function PhoneNumbers(props){
 
-  const {data} = useQuery(PHONENUMBERS_QUERY);
+  const {data} = useQuery(PHONENUMBERS_QUERY, {
+    variables: {
+      id: props.userId
+    }
+  });
   const [values, setValues] = useState({
     data: data,
     show: false

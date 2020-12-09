@@ -5,8 +5,8 @@ import placeHolderImage from "../../assets/person.png";
 import { useQuery, gql } from "@apollo/client";
 
 const SIDENAV_QUERY = gql `
-  {
-    student(id: 1) {
+ query sidenav_query($id: ID!){
+    student(id: $id) {
      profilePicURL
      names{
        name
@@ -15,8 +15,12 @@ const SIDENAV_QUERY = gql `
   }
 `
 
-function SideNav(){
-  const {data} = useQuery(SIDENAV_QUERY);
+function SideNav(props){
+  const {data} = useQuery(SIDENAV_QUERY, {
+    variables: {
+      id: props.userId
+    }
+  });
   const [values, setValues] = useState({
     data: data,
     expanded: true,

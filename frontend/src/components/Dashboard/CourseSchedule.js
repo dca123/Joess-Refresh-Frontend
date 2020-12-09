@@ -3,8 +3,8 @@ import React, { Component } from "react";
 import { Icon, Panel, Button } from "rsuite";
 
 const COURSE_SCHEDULE_QUERY = gql `
-  {
-    student(id: 1){
+  query course_schedule_query($id: ID!){
+    student(id: $id){
       classes{
         name
         code
@@ -18,7 +18,10 @@ const COURSE_SCHEDULE_QUERY = gql `
 `
 
 function CourseSchedule(props) {
-  const {data} = useQuery(COURSE_SCHEDULE_QUERY);
+  const {data} = useQuery(COURSE_SCHEDULE_QUERY, {
+    variables: { id: props.userId },
+  });
+  
   return(
     <div>
       {

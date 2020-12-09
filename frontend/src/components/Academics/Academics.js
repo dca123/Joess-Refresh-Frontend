@@ -56,12 +56,12 @@ export class Academics extends Component {
           <Route exact path="/academics">
             <div style={{ width: "100%" }}>
               <div style={{ float: "left", width: "50%", minWidth: "600px" }}>
-                <CourseSchedule height="615px" />
+                <CourseSchedule height="615px" userId={this.props.userId}/>
               </div>
               <div style={{ float: "left", width: "50%", minWidth: "600px" }}>
                 <GeneralInfo />
                 <Actions />
-                <AcademicProgress />
+                <AcademicProgress userId={this.props.userId}/>
               </div>
             </div>
           </Route>

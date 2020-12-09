@@ -14,8 +14,8 @@ import {
 import {useQuery, gql} from '@apollo/client';
 
 const CONTACTS_QUERY = gql `
-  {
-    student(id: 1) {
+  query contacts_query($id: ID!){
+    student(id: $id) {
       contacts{
         primary
         name
@@ -28,8 +28,12 @@ const CONTACTS_QUERY = gql `
   }
 `;
 
-function Contacts(){
-  const {data} = useQuery(CONTACTS_QUERY);
+function Contacts(props){
+  const {data} = useQuery(CONTACTS_QUERY, {
+    variables: {
+      id: props.userId
+    }
+  });
   const [values, setValues] = useState({
     data: data,
     key: null,

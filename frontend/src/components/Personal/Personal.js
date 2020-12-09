@@ -98,13 +98,27 @@ class Profile extends Component {
 
         <div>
           <Switch>
-            <Route path="/personal/demographics" component={Demographics} />
-            <Route path="/personal/names" component={Names} />
-            <Route path="/personal/addresses" component={Addresses} />
-            <Route path="/personal/phonenumbers" component={PhoneNumbers} />
-            <Route path="/personal/emails" component={Emails} />
-            <Route path="/personal/contacts" component={Contacts} />
-            <Route path="/personal/permissions" component={Permissions} />
+            <Route path="/personal/demographics" >
+              <Demographics userId={this.props.userId}/>
+            </Route>
+            <Route path="/personal/names">
+              <Names userId={this.props.userId} />
+            </Route>
+            <Route path="/personal/addresses">
+              <Addresses userId={this.props.userId} />
+            </Route>
+            <Route path="/personal/phonenumbers">
+              <PhoneNumbers userId={this.props.userId} />
+            </Route>
+            <Route path="/personal/emails">
+              <Emails userId={this.props.userId} />
+            </Route>
+            <Route path="/personal/contacts">
+              <Contacts userId={this.props.userId} />
+            </Route>
+            <Route path="/personal/permissions">
+              <Permissions userId={this.props.userId} />
+            </Route>
           </Switch>
         </div>
       </div>

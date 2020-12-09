@@ -3,8 +3,8 @@ import React, { useState } from "react";
 import { Panel, Icon, Button, Modal, Form, FormGroup, ControlLabel, FormControl } from "rsuite";
 
 const ADDRESSES_QUERY = gql `
-  {
-    student(id: 1) {
+  query addresses_query($id: ID!){
+    student(id: $id) {
       addresses {
         type
         address
@@ -13,9 +13,13 @@ const ADDRESSES_QUERY = gql `
   }
 `;
 
-function Addresses () {
+function Addresses (props) {
 
-  const {data} = useQuery(ADDRESSES_QUERY);
+  const {data} = useQuery(ADDRESSES_QUERY, {
+    variables: {
+      id: props.userId
+    }
+  });
   const {values, setValues} = useState({
     data: data,
     formValue: "",
