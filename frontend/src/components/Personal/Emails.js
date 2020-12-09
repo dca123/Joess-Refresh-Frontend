@@ -1,4 +1,5 @@
-import React, { Component } from "react";
+import { useQuery, gql } from "@apollo/client";
+import React, { useState } from "react";
 import {
   Panel,
   Icon,
@@ -12,89 +13,74 @@ import {
   CheckboxGroup,
 } from "rsuite";
 
-export class Emails extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      show: false,
-      data: [
-        {
-          type: "UM",
-          email: "clg2n4@umsystem.edu",
-          preferred: false,
-        },
-        {
-          type: "Alias",
-          email: "christophergu@mst.edu",
-          preferred: true,
-        },
-        {
-          type: "Google",
-          email: "christophergu@gmail.com",
-          preferred: false,
-        },
-        {
-          type: "Other",
-          email: "chrisisthebest@uiux.com",
-          preferred: false,
-        },
-      ],
-    };
 
-    this.confirm = this.confirm.bind(this);
-    this.close = this.close.bind(this);
-    this.open = this.open.bind(this);
-    this.handleChange = this.handleChange.bind(this);
-    this.delete = this.delete.bind(this);
+const EMAILS_QUERY = gql `
+  {
+      student(id: 1) {
+        emails{
+          type
+          address
+          preferred
+        }
+    }
   }
+`
 
-  confirm() {
-    const newData = this.state.data;
-    newData[this.state.key] = this.state.formValue;
 
-    if (this.state.formValue.type !== "" && this.state.formValue.name !== "") {
-      this.setState({ show: false, data: newData });
+function Emails() {
+  const {data} = useQuery(EMAILS_QUERY);
+  const [values, setValues] = useState({
+    data: data,
+    show: false,
+    key: 0,
+    formValue: ""
+  })
+  const confirm = () => {
+    const newData = values.data;
+    newData[values.key] = values.formValue;
+
+    if (values.formValue.type !== "" && values.formValue.name !== "") {
+      setValues({...values, show: false, data: newData });
     }
   }
 
-  close() {
-    this.setState({ show: false });
+  const close = () => {
+    setValues({...values, show: false });
   }
 
-  open(key) {
-    if (key < this.state.data.length) {
-      this.setState({ show: true, formValue: this.state.data[key], key: key });
+  const open = (key) => {
+    if (key < values.data.length) {
+      setValues({...values, show: true, formValue: values.data[key], key: key});
     } else {
-      this.setState({ show: true, formValue: {}, key: key });
+      setValues({...values, show: true, formValue: {}, key: key });
     }
   }
 
-  delete() {
-    let newData = this.state.data;
-    newData.splice(this.state.key, 1);
+  const remove = () => {
+    let newData = values.data;
+    newData.splice(values.key, 1);
 
-    this.setState({ show: false, data: newData });
+    setValues({...values, show: false, data: newData });
   }
 
-  handleChange(value) {
+  const handleChange = (value) => {
     console.log(value);
 
-    this.setState({
+    setValues({...values,
       formValue: value,
     });
   }
 
-  render() {
-    const { data } = this.state;
-
-    return (
+  return(
+    <div>
+      {data && (
       <Panel bordered shaded className="panel">
-        <Modal show={this.state.show} onHide={this.close} size="xs">
+        <Modal show={values.show} onHide={close} size="xs">
           <Modal.Header>
-            <Modal.Title>{this.state.key < data.length ? "Edit " : "Add "}Email</Modal.Title>
+            <Modal.Title>{values.key < data.student.emails.length ? "Edit " : "Add "}Email</Modal.Title>
           </Modal.Header>
           <Modal.Body>
-            <Form fluid onChange={this.handleChange} formValue={this.state.formValue}>
+            <Form fluid onChange={handleChange} formValue={values.formValue}>
               <FormGroup>
                 <ControlLabel>Type</ControlLabel>
                 <FormControl name="type" />
@@ -109,15 +95,15 @@ export class Emails extends Component {
             </Form>
           </Modal.Body>
           <Modal.Footer>
-            {this.state.key !== data.length && (
-              <Button onClick={this.delete} appearance="primary" color="red" style={{ float: "left" }}>
+            {values.key !== data.student.emails.length && (
+              <Button onClick={remove} appearance="primary" color="red" style={{ float: "left" }}>
                 Delete
               </Button>
             )}
-            <Button onClick={this.confirm} appearance="primary">
+            <Button onClick={confirm} appearance="primary">
               Confirm
             </Button>
-            <Button onClick={this.close} appearance="subtle">
+            <Button onClick={close} appearance="subtle">
               Cancel
             </Button>
           </Modal.Footer>
@@ -125,7 +111,7 @@ export class Emails extends Component {
 
         <Button
           appearance="primary"
-          onClick={() => this.open(data.length)}
+          onClick={() => open(data.student.emails.length)}
           style={{ display: "block", width: "110px", marginBottom: "5px" }}
         >
           <Icon icon="plus" style={{ color: "#78BE20", paddingRight: "5px" }} />
@@ -149,11 +135,11 @@ export class Emails extends Component {
             </p>
           </div>
         </div>
-        {data.map((item, key) => (
+        {data.student.emails.map((item, key) => (
           <Panel key={key} bordered style={{ marginTop: "10px" }}>
             <div style={{ width: "100%", display: "flex" }}>
               <div style={{ width: "8%", textAlign: "center", marginTop: "5px" }}>
-                <button className="edit-btn" key={key} onClick={() => this.open(key)}>
+                <button className="edit-btn" key={key} onClick={() => open(key)}>
                   {item.type !== "Primary" ? <Icon icon="pencil" size="lg" /> : null}
                 </button>
               </div>
@@ -161,7 +147,7 @@ export class Emails extends Component {
                 <strong>{item.type}</strong>
               </div>
               <div style={{ width: "20%", marginTop: "5px" }}>
-                <strong>{item.email}</strong>
+                <strong>{item.address}</strong>
               </div>
               <div style={{ marginTop: "5px" }}>
                 <Icon
@@ -174,8 +160,8 @@ export class Emails extends Component {
           </Panel>
         ))}
       </Panel>
-    );
-  }
+    )}
+    </div>
+  )
 }
-
 export default Emails;

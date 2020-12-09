@@ -1,71 +1,51 @@
-import React, { Component } from "react";
+import { useQuery, gql } from "@apollo/client";
+import React, { useState } from "react";
 import { Panel, Icon, Button, Modal, Form, FormGroup, ControlLabel, FormControl } from "rsuite";
 
-export class Addresses extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      show: false,
-      data: [
-        {
-          type: "Primary",
-          address: "825 Wellesley Place Dr",
-          city: "Chesterfield",
-          state: "MO",
-          zipCode: "63017-0747",
-          county: "Saint Louis",
-        },
-        {
-          type: "Major",
-          address: "825 Wellesley Place Dr",
-          city: "Chesterfield",
-          state: "MO",
-          zipCode: "63017-0747",
-          county: "Saint Louis",
-        },
-        {
-          type: "Local",
-          address: "2023 Vichy Rd",
-          city: "Rolla",
-          state: "MO",
-          zipCode: "65401-2017",
-          county: "Phelps",
-        },
-      ],
-    };
-
-    this.confirm = this.confirm.bind(this);
-    this.close = this.close.bind(this);
-    this.open = this.open.bind(this);
-    this.handleChange = this.handleChange.bind(this);
-    this.delete = this.delete.bind(this);
+const ADDRESSES_QUERY = gql `
+  {
+    student(id: 1) {
+      addresses {
+        type
+        address
+      }
+    } 
   }
+`;
 
-  confirm() {
-    const newData = this.state.data;
-    newData[this.state.key] = this.state.formValue;
+function Addresses () {
 
+  const {data} = useQuery(ADDRESSES_QUERY);
+  const {values, setValues} = useState({
+    data: data,
+    formValue: "",
+    show: false,
+    key: null
+  })
+  const confirm = () =>{
+    const newData = values.data;
+    newData[values.key] = values.formValue;
     if (
-      this.state.formValue.type !== "" &&
-      this.state.formValue.address !== "" &&
-      this.state.formValue.city !== "" &&
-      this.state.formValue.state !== "" &&
-      this.state.formValue.zipCode !== "" &&
-      this.state.formValue.county !== ""
+      values.formValue.type !== "" &&
+      values.formValue.address !== "" &&
+      values.formValue.city !== "" &&
+      values.formValue.state !== "" &&
+      values.formValue.zipCode !== "" &&
+      values.formValue.county !== ""
     ) {
-      this.setState({ show: false, data: newData });
+      setValues({...values, show: false, data: newData });
     }
   }
 
-  close() {
-    this.setState({ show: false });
+  const close = () => {
+    setValues({...values, show: false });
   }
 
-  open(key) {
-    if (key < this.state.data.length) {
-      this.setState({ show: true, formValue: this.state.data[key], key: key });
+  const open = (key) => {
+    if (key < values.data.length) {
+      setValues({...values, show: true, formValue: values.data[key], key: key });
     } else {
-      this.setState({
+      setValues({...values,
         show: true,
         formValue: {},
         key: key,
@@ -73,30 +53,29 @@ export class Addresses extends Component {
     }
   }
 
-  delete() {
-    let newData = this.state.data;
-    newData.splice(this.state.key, 1);
+  const remove = () => {
+    let newData = values.data;
+    newData.splice(values.key, 1);
 
-    this.setState({ show: false, data: newData });
+    setValues({...values, show: false, data: newData });
   }
 
-  handleChange(value) {
-    this.setState({
+  const handleChange = (value) => {
+    setValues({...values,
       formValue: value,
     });
   }
 
-  render() {
-    const { data } = this.state;
-
-    return (
-      <Panel bordered shaded className="panel">
-        <Modal show={this.state.show} onHide={this.close} size="xs">
+  return (
+    <div>
+      { data && 
+    (<Panel bordered shaded className="panel">
+        <Modal show={values.show} onHide={close} size="xs">
           <Modal.Header>
-            <Modal.Title>{this.state.key < data.length ? "Edit " : "Add "}Address</Modal.Title>
+            <Modal.Title>{values.key < data.student.addresses.length ? "Edit " : "Add "}Address</Modal.Title>
           </Modal.Header>
           <Modal.Body>
-            <Form fluid onChange={this.handleChange} formValue={this.state.formValue}>
+            <Form fluid onChange={handleChange} formValue={values.formValue}>
               <FormGroup>
                 <ControlLabel>Type</ControlLabel>
                 <FormControl name="type" />
@@ -124,15 +103,15 @@ export class Addresses extends Component {
             </Form>
           </Modal.Body>
           <Modal.Footer>
-            {this.state.key !== data.length && (
-              <Button onClick={this.delete} appearance="primary" color="red" style={{ float: "left" }}>
+            {values.key !== data.student.addresses.length && (
+              <Button onClick={remove} appearance="primary" color="red" style={{ float: "left" }}>
                 Delete
               </Button>
             )}
-            <Button onClick={this.confirm} appearance="primary">
+            <Button onClick={confirm} appearance="primary">
               Confirm
             </Button>
-            <Button onClick={this.close} appearance="subtle">
+            <Button onClick={close} appearance="subtle">
               Cancel
             </Button>
           </Modal.Footer>
@@ -140,7 +119,7 @@ export class Addresses extends Component {
 
         <Button
           appearance="primary"
-          onClick={() => this.open(data.length)}
+          onClick={() => open(data.student.addresses.length)}
           style={{ display: "block", width: "125px", marginBottom: "5px" }}
         >
           <Icon icon="plus" style={{ color: "#78BE20", paddingRight: "5px" }} />
@@ -158,11 +137,11 @@ export class Addresses extends Component {
             </p>
           </div>
         </div>
-        {data.map((item, key) => (
+        {data.student.addresses.map((item, key) => (
           <Panel key={key} bordered style={{ marginTop: "10px" }}>
             <div style={{ width: "100%", display: "flex" }}>
               <div style={{ width: "8%", textAlign: "center" }}>
-                <button className="edit-btn" key={key} onClick={() => this.open(key)}>
+                <button className="edit-btn" key={key} onClick={() => open(key)}>
                   {item.type !== "Primary" ? <Icon icon="pencil" size="lg" style={{ marginTop: "20px" }} /> : null}
                 </button>
               </div>
@@ -170,24 +149,17 @@ export class Addresses extends Component {
                 <strong>{item.type}</strong>
               </div>
               <div>
-                <p className="no-padding">
+                <p style={{ marginTop: "20px" }}>
                   <strong>{item.address}</strong>
-                </p>
-                <p className="no-padding">
-                  <strong>
-                    {item.city}, {item.state} {item.zipCode}
-                  </strong>
-                </p>
-                <p className="no-padding">
-                  <strong>{item.county}</strong>
                 </p>
               </div>
             </div>
           </Panel>
         ))}
-      </Panel>
-    );
-  }
+      </Panel>)
+    }
+    </div>
+  )    
 }
 
 export default Addresses;

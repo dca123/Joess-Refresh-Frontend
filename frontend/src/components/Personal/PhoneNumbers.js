@@ -1,4 +1,5 @@
-import React, { Component } from "react";
+import { useQuery, gql } from "@apollo/client";
+import React, { useState } from "react";
 import {
   Panel,
   Icon,
@@ -12,69 +13,45 @@ import {
   CheckboxGroup,
 } from "rsuite";
 
-class PhoneNumbers extends Component {
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      show: false,
-      data: [
-        {
-          type: "Mobile",
-          number: "(636) 123 - 4567",
-          extension: "n/a",
-          country: "1",
-          preferred: true,
-        },
-        {
-          type: "Home",
-          number: "(636) 123 - 5678",
-          extension: "n/a",
-          country: "1",
-          preferred: false,
-        },
-        {
-          type: "Father",
-          number: "(636) 123 - 6789",
-          extension: "n/a",
-          country: "1",
-          preferred: false,
-        },
-        {
-          type: "Mother",
-          number: "(636) 123 - 7890",
-          extension: "n/a",
-          country: "1",
-          preferred: false,
-        },
-      ],
-    };
-
-    this.confirm = this.confirm.bind(this);
-    this.close = this.close.bind(this);
-    this.open = this.open.bind(this);
-    this.handleChange = this.handleChange.bind(this);
-    this.delete = this.delete.bind(this);
+const PHONENUMBERS_QUERY= gql `
+  {
+    student(id: 1) {
+      phonenumbers {
+        type
+        number
+        ext
+        country
+        preferred
+      }
+    } 
   }
+`;
+function PhoneNumbers(){
 
-  confirm() {
-    const newData = this.state.data;
-    newData[this.state.key] = this.state.formValue;
+  const {data} = useQuery(PHONENUMBERS_QUERY);
+  const [values, setValues] = useState({
+    data: data,
+    show: false
+  })
 
-    if (this.state.formValue.type !== "" && this.state.formValue.name !== "") {
-      this.setState({ show: false, data: newData });
+  const confirm = () => {
+    const newData = values.data;
+    newData[values.key] = values.formValue;
+
+    if (values.formValue.type !== "" && values.formValue.name !== "") {
+      setValues({...values,  show: false, data: newData });
     }
   }
 
-  close() {
-    this.setState({ show: false });
+  const close = () => {
+    setValues({...values,  show: false });
   }
 
-  open(key) {
-    if (key < this.state.data.length) {
-      this.setState({ show: true, formValue: this.state.data[key], key: key });
+  const open = (key) => {
+    if (key < values.data.length) {
+      setValues({...values,  show: true, formValue: values.data[key], key: key });
     } else {
-      this.setState({
+      setValues({...values, 
         show: true,
         formValue: {},
         key: key,
@@ -82,30 +59,29 @@ class PhoneNumbers extends Component {
     }
   }
 
-  delete() {
-    let newData = this.state.data;
-    newData.splice(this.state.key, 1);
+  const remove = () => {
+    let newData = values.data;
+    newData.splice(values.key, 1);
 
-    this.setState({ show: false, data: newData });
+    setValues({...values,  show: false, data: newData });
   }
 
-  handleChange(value) {
-    this.setState({
+  const handleChange = (value) => {
+    setValues({...values, 
       formValue: value,
     });
   }
 
-  render() {
-    const { data } = this.state;
-
-    return (
+  return (
+    <div>
+      {data && (
       <Panel bordered shaded className="panel">
-        <Modal show={this.state.show} onHide={this.close} size="xs">
+        <Modal show={values.show} onHide={close} size="xs">
           <Modal.Header>
-            <Modal.Title>{this.state.key < data.length ? "Edit " : "Add "}Phone Number</Modal.Title>
+            <Modal.Title>{values.key < data.student.phonenumbers.length ? "Edit " : "Add "}Phone Number</Modal.Title>
           </Modal.Header>
           <Modal.Body>
-            <Form fluid onChange={this.handleChange} formValue={this.state.formValue}>
+            <Form fluid onChange={handleChange} formValue={values.formValue}>
               <FormGroup>
                 <ControlLabel>Type</ControlLabel>
                 <FormControl name="type" />
@@ -128,15 +104,15 @@ class PhoneNumbers extends Component {
             </Form>
           </Modal.Body>
           <Modal.Footer>
-            {this.state.key !== data.length && (
-              <Button onClick={this.delete} appearance="primary" color="red" style={{ float: "left" }}>
+            {values.key !== data.student.phonenumbers.length && (
+              <Button onClick={remove} appearance="primary" color="red" style={{ float: "left" }}>
                 Delete
               </Button>
             )}
-            <Button onClick={this.confirm} appearance="primary">
+            <Button onClick={confirm} appearance="primary">
               Confirm
             </Button>
-            <Button onClick={this.close} appearance="subtle">
+            <Button onClick={close} appearance="subtle">
               Cancel
             </Button>
           </Modal.Footer>
@@ -144,7 +120,7 @@ class PhoneNumbers extends Component {
 
         <Button
           appearance="primary"
-          onClick={() => this.open(data.length)}
+          onClick={() => open(data.student.phonenumbers.length)}
           style={{ display: "block", width: "130px", marginBottom: "5px" }}
         >
           <Icon icon="plus" style={{ color: "#78BE20", paddingRight: "5px" }} />
@@ -177,11 +153,11 @@ class PhoneNumbers extends Component {
             </p>
           </div>
         </div>
-        {data.map((item, key) => (
+        {data.student.phonenumbers.map((item, key) => (
           <Panel key={key} bordered style={{ marginTop: "10px" }}>
             <div style={{ width: "100%", display: "flex" }}>
               <div style={{ width: "8%", textAlign: "center", marginTop: "5px" }}>
-                <button className="edit-btn" key={key} onClick={() => this.open(key)}>
+                <button className="edit-btn" key={key} onClick={() => open(key)}>
                   {item.type !== "Primary" ? <Icon icon="pencil" size="lg" /> : null}
                 </button>
               </div>
@@ -208,8 +184,8 @@ class PhoneNumbers extends Component {
           </Panel>
         ))}
       </Panel>
-    );
-  }
+    )}
+    </div>
+  )
 }
-
 export default PhoneNumbers;

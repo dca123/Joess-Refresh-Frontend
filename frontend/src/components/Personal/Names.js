@@ -1,80 +1,71 @@
-import React, { Component } from "react";
+import React, { useState } from "react";
 import { Panel, Icon, Button, Modal, Form, FormGroup, FormControl, ControlLabel } from "rsuite";
+import {useQuery, gql} from '@apollo/client';
 
-export class Names extends Component {
-  constructor(props) {
-    super(props);
+const NAMES_QUERY = gql `
+  {
+    student(id: 1) {
+      names {
+        type
+        name
+      }
+    } 
+  }
+`;
+function Names() {
 
-    this.state = {
+  const {data} = useQuery(NAMES_QUERY);
+  const [values, setValues] = useState(
+    {
+      data: data,
+      formValue: "",
       show: false,
-      data: [
-        {
-          type: "Primary",
-          name: "Christopher Lee Gu",
-        },
-        {
-          type: "Nickname",
-          name: "Chris",
-        },
-        {
-          type: "Degree",
-          name: "Christopher Lee Gu",
-        },
-      ],
-    };
-
-    this.confirm = this.confirm.bind(this);
-    this.close = this.close.bind(this);
-    this.open = this.open.bind(this);
-    this.handleChange = this.handleChange.bind(this);
-    this.delete = this.delete.bind(this);
-  }
-
-  confirm() {
-    const newData = this.state.data;
-    newData[this.state.key] = this.state.formValue;
-
-    if (this.state.formValue.type !== "" && this.state.formValue.name !== "") {
-      this.setState({ show: false, data: newData });
+      key: 0
     }
+  );
+
+
+  const confirm = () => {
+    const newData = values.data;
+    newData[values.key] = values.formValue;
+
+    if (values.formValue.type !== "" && values.formValue.name !== "") {
+      setValues({...values, [values.show]: false, [values.data]: newData});
+    }
+    close();
   }
 
-  close() {
-    this.setState({ show: false });
+  const close = () => {
+    setValues({...values, show: false });
   }
 
-  open(key) {
-    if (key < this.state.data.length) {
-      this.setState({ show: true, formValue: this.state.data[key], key: key });
+  const open = (key) => {
+    if (key < values.data.length) {
+      setValues({...values, show: true, formValue: values.data[key], key: key})
     } else {
-      this.setState({ show: true, formValue: {}, key: key });
+      setValues({...values, show: true, formValue: {}, key: key})
     }
   }
 
-  delete() {
-    let newData = this.state.data;
-    newData.splice(this.state.key, 1);
-
-    this.setState({ show: false, data: newData });
+  const remove = (key) => {
+    let newData = values.data;
+    newData.splice(key, 1);
+    setValues({...values, show: false, data: newData });
   }
 
-  handleChange(value) {
-    this.setState({
-      formValue: value,
-    });
+  const handleChange = (value) =>{
+    setValues({...values, formValue: value});
   }
 
-  render() {
-    const { data } = this.state;
-
-    return (
-      <Panel bordered shaded className="panel panel-table">
-        <Modal show={this.state.show} onHide={this.close} size="xs">
+  return (
+    <div>
+      {data && (<Panel bordered shaded className="panel panel-table">
+        <Modal show={values.show} onHide={close} size="xs">
           <Modal.Header>
-            <Modal.Title>{this.state.key < data.length ? "Edit " : "Add "}Name</Modal.Title>
+            <Modal.Title>{values.key < data.student.names.length ? "Edit " : "Add "}Name</Modal.Title>
           </Modal.Header>
           <Modal.Body>
-            <Form fluid onChange={this.handleChange} formValue={this.state.formValue}>
+            <Form fluid onChange={handleChange} formValue={values.formValue}>
               <FormGroup>
                 <ControlLabel>Type</ControlLabel>
                 <FormControl name="type" />
@@ -86,15 +77,15 @@ export class Names extends Component {
             </Form>
           </Modal.Body>
           <Modal.Footer>
-            {this.state.key !== data.length && (
-              <Button onClick={this.delete} appearance="primary" color="red" style={{ float: "left" }}>
+            {values.key !== data.student.names.length && (
+              <Button onClick={remove} appearance="primary" color="red" style={{ float: "left" }}>
                 Delete
               </Button>
             )}
-            <Button onClick={this.confirm} appearance="primary">
+            <Button onClick={confirm} appearance="primary">
               Confirm
             </Button>
-            <Button onClick={this.close} appearance="subtle">
+            <Button onClick={close} appearance="subtle">
               Cancel
             </Button>
           </Modal.Footer>
@@ -102,7 +93,7 @@ export class Names extends Component {
 
         <Button
           appearance="primary"
-          onClick={() => this.open(data.length)}
+          onClick={() => open(data.student.names.length)}
           style={{ display: "block", width: "110px", marginBottom: "5px" }}
         >
           <Icon icon="plus" style={{ color: "#78BE20", paddingRight: "5px" }} />
@@ -120,11 +111,11 @@ export class Names extends Component {
         </div>
 
         <div className="table-container">
-          {data.map((item, key) => (
+          {data.student.names.map((item, key) => (
             <Panel key={key} bordered style={{ marginTop: "10px", marginRight: "10px" }}>
               <div style={{ width: "100%", display: "flex" }}>
                 <div style={{ width: "8%", textAlign: "center" }}>
-                  <button className="edit-btn" key={key} onClick={() => this.open(key)}>
+                  <button className="edit-btn" key={key} onClick={() => open(key)}>
                     {item.type !== "Primary" ? <Icon icon="pencil" size="lg" /> : null}
                   </button>
                 </div>
@@ -138,9 +129,9 @@ export class Names extends Component {
             </Panel>
           ))}
         </div>
-      </Panel>
+      </Panel>)}
+    </div>
+      
     );
-  }
 }
-
 export default Names;

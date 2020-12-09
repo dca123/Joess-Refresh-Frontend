@@ -1,147 +1,147 @@
-import React, { Component } from "react";
+import React from "react";
 import { Panel, Icon } from "rsuite";
+import {useQuery, gql} from '@apollo/client';
 
-class Demographics extends Component {
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      studentID: "12345678",
-      gender: "Male",
-      dateOfBirth: "05/11/1998",
-      birthCountry: "United States of America",
-      birthState: "Missouri",
-      maritalStatus: "Single",
-      militaryStatus: "Not Applicable",
-      citizenshipStatus: "Native",
-      citizenshipCountry: "United States of America",
-      visaPermitType: "Not Applicable",
-      visaOrPermit: "Not Applicable",
-      visaPermitCountry: "Not Applicable",
-    };
+const DEMOGRAPHICS_QUERY = gql `
+  {
+    student(id: 1) {
+      studentID
+      gender
+      dob
+      birthCountry
+      birthState
+      maritialStatus
+      militaryStatus
+      citizenshipStatus
+      citizenshipCountry
+      visaType
+      visaPermit
+      visaCountry
+    }
   }
+`;
 
-  render() {
-    const { studentID, gender, dateOfBirth, birthCountry, birthState, maritalStatus, militaryStatus } = this.state;
-    const { citizenshipStatus, citizenshipCountry, visaPermitType, visaOrPermit, visaPermitCountry } = this.state;
-
-    return (
-      <div style={{ width: "100%" }}>
-        <div style={{ width: "400px", float: "left" }}>
-          <Panel shaded bordered className="panel">
-            <h4 style={{ paddingBottom: "10px" }}>General</h4>
-            <div style={{ width: "100%" }}>
-              <div style={{ width: "50%", float: "left" }}>
-                <p className="no-padding" style={{ paddingBottom: "5px" }}>
-                  <strong>Student ID</strong>
-                </p>
-                <p className="no-padding" style={{ paddingBottom: "5px" }}>
-                  <strong>Gender</strong>
-                </p>
-                <p className="no-padding" style={{ paddingBottom: "5px" }}>
-                  <strong>Date of Birth</strong>
-                </p>
-                <p className="no-padding" style={{ paddingBottom: "5px" }}>
-                  <strong>Birth Country</strong>
-                </p>
-                <p className="no-padding" style={{ paddingBottom: "5px" }}>
-                  <strong>Birth State</strong>
-                </p>
-                <p className="no-padding" style={{ paddingBottom: "5px" }}>
-                  <strong>Marital Status</strong>
-                </p>
-                <p className="no-padding" style={{ paddingBottom: "5px" }}>
-                  <strong>Military Status</strong>
-                </p>
-              </div>
-              <div style={{ width: "50%", float: "left" }}>
-                <p className="no-padding" style={{ paddingBottom: "5px" }}>
-                  {studentID}
-                </p>
-                <p className="no-padding" style={{ paddingBottom: "5px" }}>
-                  {gender}
-                </p>
-                <p className="no-padding" style={{ paddingBottom: "5px" }}>
-                  {dateOfBirth}
-                </p>
-                <p className="no-padding" style={{ paddingBottom: "5px" }}>
-                  {birthCountry}
-                </p>
-                <p className="no-padding" style={{ paddingBottom: "5px" }}>
-                  {birthState}
-                </p>
-                <p className="no-padding" style={{ paddingBottom: "5px" }}>
-                  {maritalStatus}
-                </p>
-                <p className="no-padding" style={{ paddingBottom: "25px" }}>
-                  {militaryStatus}
-                </p>
-              </div>
+function Demographics() {
+  const {data} = useQuery(DEMOGRAPHICS_QUERY);
+  return (
+    <div>
+      {data && (<div style={{ width: "100%" }}>
+      <div style={{ width: "400px", float: "left" }}>
+        <Panel shaded bordered className="panel">
+          <h4 style={{ paddingBottom: "10px" }}>General</h4>
+          <div style={{ width: "100%" }}>
+            <div style={{ width: "50%", float: "left" }}>
+              <p className="no-padding" style={{ paddingBottom: "5px" }}>
+                <strong>Student ID</strong>
+              </p>
+              <p className="no-padding" style={{ paddingBottom: "5px" }}>
+                <strong>Gender</strong>
+              </p>
+              <p className="no-padding" style={{ paddingBottom: "5px" }}>
+                <strong>Date of Birth</strong>
+              </p>
+              <p className="no-padding" style={{ paddingBottom: "5px" }}>
+                <strong>Birth Country</strong>
+              </p>
+              <p className="no-padding" style={{ paddingBottom: "5px" }}>
+                <strong>Birth State</strong>
+              </p>
+              <p className="no-padding" style={{ paddingBottom: "5px" }}>
+                <strong>Marital Status</strong>
+              </p>
+              <p className="no-padding" style={{ paddingBottom: "5px" }}>
+                <strong>Military Status</strong>
+              </p>
             </div>
+            <div style={{ width: "50%", float: "left" }}>
+              <p className="no-padding" style={{ paddingBottom: "5px" }}>
+                {data.student.studentID}
+              </p>
+              <p className="no-padding" style={{ paddingBottom: "5px" }}>
+                {data.student.gender}
+              </p>
+              <p className="no-padding" style={{ paddingBottom: "5px" }}>
+                {data.student.dob}
+              </p>
+              <p className="no-padding" style={{ paddingBottom: "5px" }}>
+                {data.student.birthCountry}
+              </p>
+              <p className="no-padding" style={{ paddingBottom: "5px" }}>
+                {data.student.birthState}
+              </p>
+              <p className="no-padding" style={{ paddingBottom: "5px" }}>
+                {data.student.maritialStatus}
+              </p>
+              <p className="no-padding" style={{ paddingBottom: "25px" }}>
+                {data.student.militaryStatus}
+              </p>
+            </div>
+          </div>
 
-            <Panel bordered>
-              <Icon icon="exclamation-triangle" style={{ color: "#E87722", paddingRight: "5px" }} />
-              Contact the registrar’s office to change the above info.
-            </Panel>
+          <Panel bordered>
+            <Icon icon="exclamation-triangle" style={{ color: "#E87722", paddingRight: "5px" }} />
+            Contact the registrar’s office to change the above info.
           </Panel>
-        </div>
-        <div style={{ width: "400px", float: "left" }}>
-          <Panel shaded bordered className="panel">
-            <h4 style={{ paddingBottom: "10px" }}>Citizenship</h4>
-            <div style={{ width: "100%" }}>
-              <div style={{ width: "50%", float: "left" }}>
-                <p className="no-padding" style={{ paddingBottom: "5px" }}>
-                  <strong>Status</strong>
-                </p>
-                <p className="no-padding" style={{ paddingBottom: "5px" }}>
-                  <strong>Country</strong>
-                </p>
-              </div>
-              <div style={{ width: "50%", float: "left" }}>
-                <p className="no-padding" style={{ paddingBottom: "5px" }}>
-                  {citizenshipStatus}
-                </p>
-                <p className="no-padding" style={{ paddingBottom: "11px" }}>
-                  {citizenshipCountry}
-                </p>
-              </div>
-            </div>
-
-            <h4 style={{ paddingBottom: "10px" }}>Visa/Permit</h4>
-            <div style={{ width: "100%" }}>
-              <div style={{ width: "50%", float: "left" }}>
-                <p className="no-padding" style={{ paddingBottom: "5px" }}>
-                  <strong>Type</strong>
-                </p>
-                <p className="no-padding" style={{ paddingBottom: "5px" }}>
-                  <strong>Visa/Permit</strong>
-                </p>
-                <p className="no-padding" style={{ paddingBottom: "5px" }}>
-                  <strong>Country</strong>
-                </p>
-              </div>
-              <div style={{ width: "50%", float: "left" }}>
-                <p className="no-padding" style={{ paddingBottom: "5px" }}>
-                  {visaPermitType}
-                </p>
-                <p className="no-padding" style={{ paddingBottom: "5px" }}>
-                  {visaOrPermit}
-                </p>
-                <p className="no-padding" style={{ paddingBottom: "25px" }}>
-                  {visaPermitCountry}
-                </p>
-              </div>
-            </div>
-
-            <Panel bordered>
-              <Icon icon="exclamation-triangle" style={{ color: "#E87722", paddingRight: "5px" }} />
-              Contact the registrar’s office to change the above info.
-            </Panel>
-          </Panel>
-        </div>
+        </Panel>
       </div>
-    );
-  }
+      <div style={{ width: "400px", float: "left" }}>
+        <Panel shaded bordered className="panel">
+          <h4 style={{ paddingBottom: "10px" }}>Citizenship</h4>
+          <div style={{ width: "100%" }}>
+            <div style={{ width: "50%", float: "left" }}>
+              <p className="no-padding" style={{ paddingBottom: "5px" }}>
+                <strong>Status</strong>
+              </p>
+              <p className="no-padding" style={{ paddingBottom: "5px" }}>
+                <strong>Country</strong>
+              </p>
+            </div>
+            <div style={{ width: "50%", float: "left" }}>
+              <p className="no-padding" style={{ paddingBottom: "5px" }}>
+                {data.student.citizenshipStatus}
+              </p>
+              <p className="no-padding" style={{ paddingBottom: "11px" }}>
+                {data.student.citizenshipCountry}
+              </p>
+            </div>
+          </div>
+
+          <h4 style={{ paddingBottom: "10px" }}>Visa/Permit</h4>
+          <div style={{ width: "100%" }}>
+            <div style={{ width: "50%", float: "left" }}>
+              <p className="no-padding" style={{ paddingBottom: "5px" }}>
+                <strong>Type</strong>
+              </p>
+              <p className="no-padding" style={{ paddingBottom: "5px" }}>
+                <strong>Visa/Permit</strong>
+              </p>
+              <p className="no-padding" style={{ paddingBottom: "5px" }}>
+                <strong>Country</strong>
+              </p>
+            </div>
+            <div style={{ width: "50%", float: "left" }}>
+              <p className="no-padding" style={{ paddingBottom: "5px" }}>
+                {data.student.visaType}
+              </p>
+              <p className="no-padding" style={{ paddingBottom: "5px" }}>
+                {data.student.visaPermit}
+              </p>
+              <p className="no-padding" style={{ paddingBottom: "25px" }}>
+                {data.student.visaCountry}
+              </p>
+            </div>
+          </div>
+
+          <Panel bordered>
+            <Icon icon="exclamation-triangle" style={{ color: "#E87722", paddingRight: "5px" }} />
+            Contact the registrar’s office to change the above info.
+          </Panel>
+        </Panel>
+      </div>
+    </div>)}
+    </div>
+    
+  );
 }
 
 export default Demographics;

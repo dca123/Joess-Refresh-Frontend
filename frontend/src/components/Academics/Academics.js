@@ -1,8 +1,8 @@
 import React, { Component } from "react";
 import { Nav } from "rsuite";
-import { CourseSchedule } from "../Dashboard/CourseSchedule";
 import { NavLink, Switch, Route } from "react-router-dom";
 
+import CourseSchedule  from "../Dashboard/CourseSchedule";
 import AcademicProgress from "../Dashboard/AcademicProgress";
 import GeneralInfo from "./GeneralInfo";
 import Actions from "./Actions";
