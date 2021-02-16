@@ -1,5 +1,5 @@
 
-![](https://i.imgur.com/HpMehrs.png)
+![](https://i.imgur.com/EJ8u2KY.png)
 # Table of Contents
 - [Problem](#problem)
 - [Solution](#solution)
