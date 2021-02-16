@@ -1,6 +1,7 @@
 
 ![](https://i.imgur.com/HpMehrs.png)
 # Table of Contents
+- [Final Solution](#final-solution)
 - [Problem](#problem)
 - [Solution](#solution)
 - [Technologies](#technologies)
@@ -9,19 +10,21 @@
 
 ![Screen shot of final product](https://i.imgur.com/TbkWMaK.png)
 
+
 # Problem
 The [current](https://joess.mst.edu/) student service solution used by the Missouri University of Science & Technology is outdated. 
 
 These issues include -
 - Poor UX design where it is difficult to find the correct feature when needed
- - The UI colours does not agree with the university's branding color scheme
+ - The UI colors do not agree with the university's branding color scheme
  - Cluttered, congested raw links
- - UI makes poor usage of user view port
+ - UI makes poor usage of the user viewport
 
 ![Screen Shot of current implementation of Joes'SS](https://i.imgur.com/CPQChfF.png)
 
 # Solution
-For my senior design project, my team solved this by implementing a new rendition of Joe'SS. Care was taken into improving the UX by surveying students on what they didn't like about the current solution. The UI was reworked by using the univesity branding colors, creating a new side navigation bar & better placing the components by grouping them together in a more meaningful way. 
+For my senior design project, my team solved this by implementing a new rendition of Joe'SS. Care was taken into improving the UX by surveying students on what they didn't like about the current solution. The UI was reworked by using university branding colors, creating a new side navigation bar & reworking the placement of the components.
+
 # Technologies
 
  - [React](http://reactjs.org/)
