@@ -1,14 +1,12 @@
 
 ![](https://i.imgur.com/HpMehrs.png)
 # Table of Contents
-- [Final Solution](#final-solution)
 - [Problem](#problem)
 - [Solution](#solution)
 - [Technologies](#technologies)
 - [Usage](#usage)
 
 
-# Final Solution
 ![Screen shot of final product](https://i.imgur.com/TbkWMaK.png)
 
 # Problem
